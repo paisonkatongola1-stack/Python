@@ -80,7 +80,7 @@ MENUS = {
             "1": {"text": "Airtel Pack (On-Net)",   "sub": "Airtel to Airtel only",       "type": "menu",   "target": "airtel_on_net_pack"},
             "2": {"text": "All-Networks Pack",      "sub": "Calls, SMS, data – any network","type": "menu",   "target": "all_networks_pack"},
             "3": {"text": "Check So Che Balance",   "sub": "",                            "type": "action", "action": "show_balance", "balance_type": "so_che"},
-            "4": {"text": "Buy for Another Number", "sub": "",                            "type": "menu",   "target": "buy_for_other_recipient"},
+            "4": {"text": "Buy for Another Number", "sub": "",                            "type": "input",  "action": "input_recipient"},
             "0": {"text": "Back",                   "sub": "",                            "type": "action", "action": "back"},
         }
     },
@@ -284,15 +284,6 @@ MENUS = {
             "0": {"text": "Back", "sub": "", "type": "action", "action": "back"},
         }
     },
-    "buy_for_other_recipient": {
-        "title": "Buy for Another Number",
-        "parent": "so_che_packs",
-        "options": {
-            "text": "Enter recipient's Airtel number",
-            "type": "input",
-            "action": "input_recipient"
-        }
-    }
 }
 
 BALANCES = {
@@ -818,11 +809,15 @@ class UssdApp(tk.Tk):
             self.purchase_msg.config(text="⚠ Please select a payment method.", fg=COLORS["yellow"])
             return
         methods = {"1": "Airtime", "2": "Airtel Money", "3": "Debit Card"}
-        self.purchase_msg.config(
-            text=f"✅  Payment via {methods[method]} successful!\n"
-                 f"Bundle '{bundle}' activated for {validity}.",
-            fg=COLORS["green"])
+
+        success_text = f"✅  Payment via {methods[method]} successful!\n"
+        success_text += f"Bundle '{bundle}' activated for {validity}."
+        if self.recipient_num:
+            success_text += f"\nRecipient: {self.recipient_num}"
+
+        self.purchase_msg.config(text=success_text, fg=COLORS["green"])
         self._set_status(f"Bundle activated: {bundle}", COLORS["green"])
+        self.recipient_num = None
 
     # ═══════════════════════════════════════════
     #  BALANCE SCREEN

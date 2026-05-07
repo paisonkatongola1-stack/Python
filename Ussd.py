@@ -117,8 +117,9 @@ class USSDMenu:
                     },
                     "4": {
                         "text": "Buy for another number",
-                        "type": "menu",
-                        "target": "buy_for_other_recipient"
+                        "prompt": "Enter recipient's Airtel number",
+                        "type": "input",
+                        "action": "input_recipient"
                     },
                     "0": {
                         "text": "Back",
@@ -723,15 +724,6 @@ class USSDMenu:
                 }
             },
             
-            "buy_for_other_recipient": {
-                "title": "Buy for another number",
-                "parent": "so_che_packs",
-                "options": {
-                    "text": "Enter recipient's Airtel number",
-                    "type": "input",
-                    "action": "input_recipient"
-                }
-            }
         }
     
     def clear_screen(self):
@@ -980,7 +972,10 @@ class USSDMenu:
         self.show_section_header(f"Purchase - {bundle_type}")
         print(f"\n{Colors.BOLD}Bundle Details:{Colors.ENDC}")
         print(f"  Bundle Type : {Colors.CYAN}{bundle_type}{Colors.ENDC}")
-        print(f"  Validity    : {Colors.YELLOW}{validity}{Colors.ENDC}\n")
+        print(f"  Validity    : {Colors.YELLOW}{validity}{Colors.ENDC}")
+        if self.recipient_number:
+            print(f"  Recipient   : {Colors.CYAN}{self.recipient_number}{Colors.ENDC}")
+        print()
         print(f"{Colors.BOLD}Select payment method:{Colors.ENDC}")
         print(f"  {Colors.GREEN}1{Colors.ENDC}. Airtime (K5 - K100)")
         print(f"  {Colors.GREEN}2{Colors.ENDC}. Airtel Money")
@@ -1000,7 +995,10 @@ class USSDMenu:
             print(f"\n{Colors.BOLD}Activation Confirmation:{Colors.ENDC}")
             print(f"  Bundle    : {Colors.CYAN}{bundle_type}{Colors.ENDC}")
             print(f"  Validity  : {Colors.CYAN}{validity}{Colors.ENDC}")
+            if self.recipient_number:
+                print(f"  Recipient : {Colors.CYAN}{self.recipient_number}{Colors.ENDC}")
             print(f"  Status    : {Colors.GREEN}ACTIVE{Colors.ENDC}")
+            self.recipient_number = None
         elif choice == "0":
             print(f"\n{Colors.YELLOW}⊘ Purchase cancelled.{Colors.ENDC}")
         else:
@@ -1102,7 +1100,8 @@ class USSDMenu:
     
     def handle_input(self, input_data):
         """Handle input prompts"""
-        print(f"\n{Colors.BOLD}{input_data.get('text', 'Enter value:')}{Colors.ENDC}")
+        prompt = input_data.get('prompt') or input_data.get('text') or 'Enter value:'
+        print(f"\n{Colors.BOLD}{prompt}{Colors.ENDC}")
         user_input = input(f"{Colors.YELLOW}➜ {Colors.ENDC}").strip()
         if input_data.get("action") == "input_recipient":
             if self.validate_phone(user_input):

@@ -10,6 +10,7 @@
 
 import os
 import sys
+import time
 from datetime import datetime
 
 # ANSI Color codes for terminal output
@@ -989,7 +990,31 @@ class USSDMenu:
                 "2": "Airtel Money",
                 "3": "Debit Card"
             }
-            print(f"\n{Colors.YELLOW}⏳ Processing payment via {payment_methods[choice]}...{Colors.ENDC}")
+
+            method_name = payment_methods[choice]
+
+            if choice == "2": # Airtel Money
+                print(f"\n{Colors.CYAN}📲 Sending Airtel Money payment request to {self.user_number}...{Colors.ENDC}")
+                time.sleep(1.5) # Simulate API latency
+                print(f"{Colors.YELLOW}🔔 PUSH NOTIFICATION SENT. Please check your phone.{Colors.ENDC}")
+                print(f"\n{Colors.BOLD}╔══════════════════════════════════════════════╗")
+                print(f"║             AIRTEL MONEY PAYMENT             ║")
+                print(f"╠══════════════════════════════════════════════╣")
+                print(f"║  Enter PIN to pay for:                       ║")
+                print(f"║  {bundle_type:<44}║")
+                print(f"╚══════════════════════════════════════════════╝{Colors.ENDC}")
+                pin = input(f"{Colors.YELLOW}Enter 4-digit PIN: ➜ {Colors.ENDC}").strip()
+
+                if len(pin) == 4 and pin.isdigit():
+                    print(f"\n{Colors.GREEN}✓ PIN Verified. Authorizing transaction...{Colors.ENDC}")
+                    time.sleep(1)
+                else:
+                    print(f"\n{Colors.RED}✘ Invalid PIN or Transaction Timeout. Transaction failed.{Colors.ENDC}")
+                    input(f"\n{Colors.DARK_GRAY}Press Enter to continue...{Colors.ENDC}")
+                    return
+
+            print(f"\n{Colors.YELLOW}⏳ Processing payment via {method_name}...{Colors.ENDC}")
+            time.sleep(1)
             print(f"{Colors.GREEN}✓ Payment successful!{Colors.ENDC}")
             print(f"{Colors.GREEN}✓ Bundle activated successfully!{Colors.ENDC}")
             print(f"\n{Colors.BOLD}Activation Confirmation:{Colors.ENDC}")

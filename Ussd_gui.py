@@ -8,7 +8,8 @@
 """
 
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, simpledialog
+import time
 from datetime import datetime
 import sys
 
@@ -810,7 +811,26 @@ class UssdApp(tk.Tk):
             return
         methods = {"1": "Airtime", "2": "Airtel Money", "3": "Debit Card"}
 
-        success_text = f"✅  Payment via {methods[method]} successful!\n"
+        method_name = methods[method]
+
+        if method == "2": # Airtel Money
+            self.purchase_msg.config(text=f"📲 Sending payment request to {self.user_number.get()}...", fg=COLORS["cyan"])
+            self.update()
+            time.sleep(1)
+
+            pin = simpledialog.askstring("Airtel Money PIN",
+                                         f"Enter 4-digit PIN to pay for:\n{bundle}\n\n(Sent to {self.user_number.get()})",
+                                         parent=self, show='*')
+
+            if pin and len(pin) == 4 and pin.isdigit():
+                self.purchase_msg.config(text="⌛ Verifying PIN...", fg=COLORS["yellow"])
+                self.update()
+                time.sleep(1)
+            else:
+                self.purchase_msg.config(text="❌ Invalid PIN or Transaction Cancelled.", fg=COLORS["red_primary"])
+                return
+
+        success_text = f"✅  Payment via {method_name} successful!\n"
         success_text += f"Bundle '{bundle}' activated for {validity}."
         if self.recipient_num:
             success_text += f"\nRecipient: {self.recipient_num}"

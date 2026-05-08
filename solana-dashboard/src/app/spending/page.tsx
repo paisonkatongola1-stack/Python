@@ -11,7 +11,7 @@ import {
   ResponsiveContainer,
   Cell
 } from 'recharts';
-import { TrendingUp, Calendar, ArrowUpRight, DollarSign } from 'lucide-react';
+import { TrendingUp, Calendar, ArrowUpRight, DollarSign, Award, CheckCircle2 } from 'lucide-react';
 
 const data = [
   { name: 'Mon', amount: 1.2 },
@@ -133,6 +133,30 @@ export default function SpendingPage() {
             </div>
           </div>
         ))}
+      </div>
+
+      <div className="bg-white p-8 rounded-2xl border border-slate-200">
+        <h3 className="font-bold text-slate-800 mb-6 flex items-center gap-2">
+          <Award className="w-5 h-5 text-amber-500" />
+          Impact Milestones
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            { title: 'Solana Pioneer', detail: 'First 10 SOL spent', date: 'Oct 12', achieved: true },
+            { id: 2, title: 'Scholar Maker', detail: 'Sponsored a student', date: 'Oct 20', achieved: true },
+            { title: 'Gas Saver', detail: '100 tx with < 0.01 fee', date: 'Upcoming', achieved: false },
+            { title: 'Power Donor', detail: 'Top 10% in Community', date: 'Upcoming', achieved: false },
+          ].map((m, i) => (
+            <div key={i} className={`p-4 rounded-xl border ${m.achieved ? 'bg-indigo-50/50 border-indigo-100' : 'bg-slate-50 border-slate-100 opacity-60'}`}>
+              <div className="flex justify-between items-start mb-2">
+                <p className="text-sm font-bold text-slate-800">{m.title}</p>
+                {m.achieved && <CheckCircle2 className="w-4 h-4 text-indigo-600" />}
+              </div>
+              <p className="text-xs text-slate-500 mb-2">{m.detail}</p>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{m.date}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

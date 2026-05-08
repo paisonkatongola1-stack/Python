@@ -55,15 +55,15 @@ export default function TransactionsPage() {
   });
 
   const getRiskColor = (score: number) => {
-    if (score < 30) return 'text-green-600 bg-green-50';
-    if (score < 70) return 'text-amber-600 bg-amber-50';
-    return 'text-red-600 bg-red-50';
+    if (score < 30) return 'text-brand-green bg-brand-green/10';
+    if (score < 70) return 'text-amber-500 bg-amber-500/10';
+    return 'text-brand-red bg-brand-red/10';
   };
 
   const getRiskBarColor = (score: number) => {
-    if (score < 30) return 'bg-green-500';
+    if (score < 30) return 'bg-brand-green';
     if (score < 70) return 'bg-amber-500';
-    return 'bg-red-500';
+    return 'bg-brand-red';
   };
 
   return (
@@ -122,8 +122,11 @@ export default function TransactionsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {filteredTransactions.map((tx) => (
-                <tr key={tx.id} className="hover:bg-slate-50 transition-colors">
+              {filteredTransactions.map((tx, idx) => (
+                <tr key={tx.id} className={cn(
+                  "hover:bg-slate-50 transition-colors",
+                  idx % 2 === 0 ? "bg-white" : "bg-slate-50/50"
+                )}>
                   <td className="px-6 py-4">
                     <div className="flex flex-col">
                       <span className="text-sm font-bold text-slate-800">{tx.date.split(' ')[0]}</span>
@@ -155,12 +158,16 @@ export default function TransactionsPage() {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className={cn(
-                      "flex items-center gap-1.5 text-xs font-bold",
-                      tx.decision === 'Approve' ? 'text-green-600' : 'text-red-600'
-                    )}>
-                      {tx.decision === 'Approve' ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
-                      {tx.decision}
+                    <div className="flex items-center gap-2">
+                      {tx.decision === 'Approve' ? (
+                        <button className="px-3 py-1 text-[10px] font-black uppercase border-2 border-brand-green text-brand-green rounded-lg hover:bg-brand-green hover:text-white transition-colors">
+                          Approve
+                        </button>
+                      ) : (
+                        <button className="px-3 py-1 text-[10px] font-black uppercase bg-brand-red text-white border-2 border-brand-red rounded-lg hover:brightness-110 transition-all">
+                          Deny
+                        </button>
+                      )}
                     </div>
                   </td>
                   <td className="px-6 py-4 text-right">

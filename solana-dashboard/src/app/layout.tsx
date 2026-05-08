@@ -4,6 +4,9 @@ import "./globals.css";
 import { WalletContextProvider } from "@/components/WalletContextProvider";
 import AppLayout from "@/components/AppLayout";
 import { AuthProvider } from "@/context/AuthContext";
+import { ThemeProvider } from "@/context/ThemeContext";
+import WalletPopup from "@/components/WalletPopup";
+import ScamOverlay from "@/components/ScamOverlay";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,13 +33,17 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-slate-50 text-slate-900">
+      <body className="min-h-full flex flex-col bg-background text-foreground">
         <AuthProvider>
-          <WalletContextProvider>
-            <AppLayout>
-              {children}
-            </AppLayout>
-          </WalletContextProvider>
+          <ThemeProvider>
+            <WalletContextProvider>
+              <AppLayout>
+                {children}
+                <WalletPopup />
+                <ScamOverlay />
+              </AppLayout>
+            </WalletContextProvider>
+          </ThemeProvider>
         </AuthProvider>
       </body>
     </html>

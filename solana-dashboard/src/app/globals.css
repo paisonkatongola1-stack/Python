@@ -2,19 +2,59 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@layer base {
+  :root {
+    /* SolanaDash Brand Colors */
+    --brand-navy: 229 52% 24%;       /* #1E2A5E */
+    --brand-green: 155 89% 51%;      /* #14F195 */
+    --brand-red: 0 100% 65%;         /* #FF4D4D */
+    --brand-dark: 222 45% 7%;        /* #0A0F1A */
+
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+    --primary: 229 52% 24%;
+    --primary-foreground: 0 0% 100%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --border: 214 32% 91%;
+
+    --accent-green: 155 89% 51%;
+    --accent-red: 0 100% 65%;
+  }
+
+  [data-theme='emerald'] {
+    --background: 120 20% 98%;
+    --foreground: 145 45% 10%;
+    --primary: 142 71% 45%;
+    --primary-foreground: 0 0% 100%;
+    --card: 0 0% 100%;
+    --card-foreground: 145 45% 10%;
+    --border: 142 30% 90%;
+  }
+
+  [data-theme='cyberpunk'] {
+    --background: 222 45% 7%;
+    --foreground: 0 0% 100%;
+    --primary: 155 89% 51%;
+    --primary-foreground: 222 45% 7%;
+    --card: 222 45% 10%;
+    --card-foreground: 0 0% 100%;
+    --border: 155 89% 51% / 0.2;
+
+    --accent-green: 155 89% 51%;
+    --accent-red: 0 100% 65%;
+  }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  transition: all 0.3s ease;
 }
 
 /* Wallet Adapter Overrides */
 .wallet-adapter-button {
-  background-color: #4f46e5 !important;
+  background-color: hsl(var(--primary)) !important;
   font-family: inherit !important;
   font-size: 0.875rem !important;
   font-weight: 600 !important;
@@ -25,5 +65,5 @@ body {
 }
 
 .wallet-adapter-button:hover {
-  background-color: #4338ca !important;
+  filter: brightness(0.9);
 }

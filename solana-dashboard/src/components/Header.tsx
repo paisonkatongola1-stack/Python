@@ -7,6 +7,7 @@ import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { Bell, Search, LogOut, User } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
+import ThemeToggle from './ThemeToggle';
 
 // Import WalletMultiButton dynamically to avoid hydration issues
 const WalletMultiButtonDynamic = dynamic(
@@ -65,6 +66,7 @@ export default function Header() {
       </div>
 
       <div className="flex items-center gap-4">
+        <ThemeToggle />
         {/* Notifications */}
         <div className="relative">
           <button

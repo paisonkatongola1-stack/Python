@@ -1,12 +1,14 @@
 'use client';
 
 import { useWallet } from '@solana/wallet-adapter-react';
+import ActivityFeed from '@/components/ActivityFeed';
 import {
   ArrowUpRight,
   ArrowDownRight,
   Wallet,
   Activity,
   ShieldCheck,
+  ShieldAlert,
   Globe,
   GraduationCap,
   Heart
@@ -19,11 +21,11 @@ export default function Home() {
   if (!connected) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
-        <div className="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mb-6 text-indigo-600">
+        <div className="w-20 h-20 bg-brand-green/10 rounded-full flex items-center justify-center mb-6 text-brand-green">
           <Wallet className="w-10 h-10" />
         </div>
-        <h1 className="text-3xl font-bold text-slate-900 mb-2">Welcome to SolanaDash</h1>
-        <p className="text-slate-600 max-w-md mb-8">
+        <h1 className="text-3xl font-bold text-foreground mb-2">Welcome to SolanaDash</h1>
+        <p className="text-slate-500 max-w-md mb-8 font-medium">
           Connect your Phantom wallet (Devnet) to view your transaction history,
           risk analysis, and join the global scholarship community.
         </p>
@@ -33,6 +35,21 @@ export default function Home() {
 
   return (
     <div className="space-y-8 pb-12">
+      <div className="bg-brand-red text-white px-6 py-4 rounded-2xl flex items-center justify-between shadow-lg shadow-brand-red/10 animate-pulse">
+        <div className="flex items-center gap-3">
+          <div className="bg-white/20 p-2 rounded-lg">
+            <ShieldAlert className="w-5 h-5" />
+          </div>
+          <div>
+            <p className="font-black uppercase text-sm tracking-wider">Urgent Security Alert</p>
+            <p className="text-xs font-bold opacity-80">3 suspicious activities blocked in the last 24h</p>
+          </div>
+        </div>
+        <button className="bg-white text-brand-red px-4 py-2 rounded-xl text-xs font-black uppercase hover:bg-brand-red hover:text-white border-2 border-white transition-all">
+          View Details
+        </button>
+      </div>
+
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-slate-900">Dashboard Summary</h1>
@@ -103,10 +120,10 @@ export default function Home() {
               distributing more than <span className="text-white font-bold">150,000 SOL</span> in direct educational grants.
             </p>
             <div className="flex gap-4">
-              <Link href="/community" className="bg-white text-slate-900 px-6 py-3 rounded-xl font-bold hover:bg-slate-100 transition-colors">
+              <Link href="/community" className="bg-brand-green text-brand-navy px-6 py-3 rounded-xl font-black uppercase text-sm hover:brightness-110 transition-all shadow-lg shadow-brand-green/10">
                 View Community
               </Link>
-              <Link href="/scholarships" className="bg-white/10 text-white px-6 py-3 rounded-xl font-bold hover:bg-white/20 transition-colors border border-white/20">
+              <Link href="/scholarships" className="bg-white/10 text-white px-6 py-3 rounded-xl font-black uppercase text-sm hover:bg-white/20 transition-colors border border-white/20">
                 Apply for Funding
               </Link>
             </div>
@@ -132,8 +149,8 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
           <div className="flex items-center justify-between mb-8">
             <h3 className="text-xl font-bold text-slate-800">Recent Transactions</h3>
             <Link href="/transactions" className="text-sm text-indigo-600 hover:underline font-bold">View History</Link>
@@ -159,30 +176,34 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm overflow-hidden relative">
-          <div className="absolute -right-4 -top-4 w-24 h-24 bg-indigo-50 rounded-full"></div>
-          <div className="relative">
-            <div className="flex items-center justify-between mb-8">
-              <h3 className="text-xl font-bold text-slate-800">Active Scholarships</h3>
-              <Link href="/scholarships" className="text-sm text-indigo-600 hover:underline font-bold">View All</Link>
-            </div>
-            <div className="space-y-6">
-              {[
-                { title: 'Rust Mastery Grant', type: 'Dev Education', amount: '25 SOL' },
-                { title: 'Zambia Web3 Camp', type: 'Community Event', amount: '150 SOL' },
-                { title: 'DeFi protocol Audit', type: 'Project Grant', amount: '50 SOL' },
-              ].map((item, i) => (
-                <div key={i} className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-indigo-100 rounded-2xl flex items-center justify-center text-indigo-600">
-                    <GraduationCap className="w-6 h-6" />
+        <div className="lg:col-span-1 space-y-8">
+          <ActivityFeed />
+
+          <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm overflow-hidden relative">
+            <div className="absolute -right-4 -top-4 w-24 h-24 bg-indigo-50 rounded-full"></div>
+            <div className="relative">
+              <div className="flex items-center justify-between mb-8">
+                <h3 className="text-xl font-bold text-slate-800">Active Scholarships</h3>
+                <Link href="/scholarships" className="text-sm text-indigo-600 hover:underline font-bold">View All</Link>
+              </div>
+              <div className="space-y-6">
+                {[
+                  { title: 'Rust Mastery Grant', type: 'Dev Education', amount: '25 SOL' },
+                  { title: 'Zambia Web3 Camp', type: 'Community Event', amount: '150 SOL' },
+                  { title: 'DeFi protocol Audit', type: 'Project Grant', amount: '50 SOL' },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-indigo-100 rounded-2xl flex items-center justify-center text-indigo-600">
+                      <GraduationCap className="w-6 h-6" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-bold text-slate-800">{item.title}</p>
+                      <p className="text-xs text-slate-500 font-medium">{item.type}</p>
+                    </div>
+                    <p className="font-black text-indigo-600">{item.amount}</p>
                   </div>
-                  <div className="flex-1">
-                    <p className="font-bold text-slate-800">{item.title}</p>
-                    <p className="text-xs text-slate-500 font-medium">{item.type}</p>
-                  </div>
-                  <p className="font-black text-indigo-600">{item.amount}</p>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </div>

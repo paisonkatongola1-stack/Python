@@ -1,0 +1,18 @@
+
+> studentlink-zambia@0.1.0 dev
+> next dev --turbopack
+
+   ▲ Next.js 15.1.0 (Turbopack)
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.0.2:3000
+
+ ✓ Starting...
+ ✓ Ready in 1332ms
+ ○ Compiling / ...
+ ✓ Compiled / in 7.7s
+ GET / 200 in 8672ms
+ ✓ Compiled /login in 401ms
+ GET /login 200 in 467ms
+ GET / 200 in 96ms
+ GET /login 200 in 70ms
+[?25h

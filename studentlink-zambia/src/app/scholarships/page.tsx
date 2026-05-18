@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   GraduationCap,
   Search,
@@ -12,10 +12,10 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { pb } from "@/lib/pocketbase";
+import { usePocketBaseList } from "@/hooks/usePocketBase";
+import { RecordModel } from "pocketbase";
 
-type Scholarship = {
-  id: string;
+interface Scholarship extends RecordModel {
   title: string;
   provider: string;
   deadline: string;
@@ -23,31 +23,13 @@ type Scholarship = {
   category: string;
   location: string;
   requirements: string;
-};
+}
 
 export default function ScholarshipsPage() {
-  const [scholarships, setScholarships] = useState<Scholarship[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: scholarships, loading } = usePocketBaseList<Scholarship>('scholarships');
   const [activeTab, setActiveTab] = useState("All");
   const [saved, setSaved] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-
-  useEffect(() => {
-    fetchScholarships();
-  }, []);
-
-  const fetchScholarships = async () => {
-    try {
-      const records = await pb.collection('scholarships').getFullList<Scholarship>({
-        sort: '-created',
-      });
-      setScholarships(records);
-    } catch (err) {
-      console.error("Failed to fetch scholarships:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const toggleSave = (id: string) => {
     setSaved(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);

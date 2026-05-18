@@ -2,73 +2,33 @@
 
 import React, { useState } from "react";
 import {
-
   Search,
   Building2,
   Clock,
   MapPin,
   Zap,
   ArrowUpRight,
-  DollarSign
+  DollarSign,
+  Loader2
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { usePocketBaseList } from "@/hooks/usePocketBase";
+import { RecordModel } from "pocketbase";
 
-const jobs = [
-  {
-    id: "1",
-    role: "Software Engineering Intern",
-    company: "Zamtel",
-    location: "Lusaka, HQ",
-    type: "Internship",
-    salary: "K3,500/mo",
-    posted: "2 days ago",
-    logo: "ZT"
-  },
-  {
-    id: "2",
-    role: "Marketing Assistant",
-    company: "Airtel Zambia",
-    location: "Lusaka",
-    type: "Part-time",
-    salary: "K4,000/mo",
-    posted: "5 hours ago",
-    logo: "AZ"
-  },
-  {
-    id: "3",
-    role: "Graduate Trainee - Audit",
-    company: "PwC Zambia",
-    location: "Ndola",
-    type: "Full-time",
-    salary: "Competitive",
-    posted: "1 week ago",
-    logo: "PW"
-  },
-  {
-    id: "4",
-    role: "Social Media Manager",
-    company: "Zazu Africa",
-    location: "Remote",
-    type: "Contract",
-    salary: "K2,500/mo",
-    posted: "3 days ago",
-    logo: "ZA"
-  },
-  {
-    id: "5",
-    role: "Junior Content Creator",
-    company: "Liquid Intelligent Tech",
-    location: "Lusaka",
-    type: "Internship",
-    salary: "K3,000/mo",
-    posted: "1 day ago",
-    logo: "LI"
-  },
-];
+interface Job extends RecordModel {
+  role: string;
+  company: string;
+  location: string;
+  type: string;
+  salary: string;
+}
 
 export default function JobsPage() {
+  const { data: jobs, loading } = usePocketBaseList<Job>('jobs');
   const [activeTab, setActiveTab] = useState("All");
+
+  const filtered = jobs.filter(job => activeTab === "All" || job.type === activeTab);
 
   return (
     <div className="space-y-8">
@@ -84,7 +44,6 @@ export default function JobsPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        {/* Sidebar Filters */}
         <div className="lg:col-span-1 space-y-6">
           <div className="glass-card p-5">
              <h3 className="font-bold mb-4 text-sm">Search Opportunities</h3>
@@ -113,68 +72,65 @@ export default function JobsPage() {
                 ))}
              </div>
           </div>
-
-          <div className="glass-card p-5 bg-gradient-to-br from-primary/10 to-transparent border-primary/20">
-             <div className="flex items-center gap-2 text-primary font-bold mb-2">
-               <Zap className="w-4 h-4" />
-               <span className="text-sm">Career Tip</span>
-             </div>
-             <p className="text-xs text-slate-400 leading-relaxed">
-               Zambian tech companies value GitHub portfolios. Make sure to link your projects in your applications!
-             </p>
-          </div>
         </div>
 
-        {/* Jobs List */}
-        <div className="lg:col-span-3 space-y-4">
-          {jobs.map((job, i) => (
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.05 }}
-              key={job.id}
-              className="glass-card p-5 hover:border-white/20 transition-all cursor-pointer group"
-            >
-              <div className="flex flex-col sm:flex-row sm:items-center gap-5">
-                <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center font-bold text-slate-400 group-hover:border-primary/50 group-hover:text-primary transition-all">
-                  {job.logo}
-                </div>
-                <div className="flex-1">
-                   <div className="flex flex-wrap items-center gap-2 mb-1">
-                      <h3 className="font-bold text-lg">{job.role}</h3>
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-slate-400">
-                        {job.type}
-                      </span>
-                   </div>
-                   <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500">
-                      <div className="flex items-center gap-1">
-                        <Building2 className="w-3 h-3" />
-                        {job.company}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <MapPin className="w-3 h-3" />
-                        {job.location}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <DollarSign className="w-3 h-3" />
-                        {job.salary}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
-                        {job.posted}
-                      </div>
-                   </div>
-                </div>
-                <button className="btn-secondary py-2 px-6 text-sm font-semibold flex items-center gap-2 self-start sm:self-center">
-                  View Details <ArrowUpRight className="w-4 h-4" />
-                </button>
-              </div>
-            </motion.div>
-          ))}
-
-          <button className="w-full py-4 text-sm font-medium text-slate-500 hover:text-white transition-colors border border-dashed border-white/10 rounded-2xl">
-            Load More Opportunities
-          </button>
+        <div className="lg:col-span-3">
+          {loading ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="w-10 h-10 animate-spin text-primary" />
+            </div>
+          ) : filtered.length === 0 ? (
+            <div className="text-center py-20 glass-card">
+              <p className="text-slate-400">No job opportunities found at the moment.</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {filtered.map((job, i) => (
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  key={job.id}
+                  className="glass-card p-5 hover:border-white/20 transition-all cursor-pointer group"
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-5">
+                    <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center font-bold text-slate-400 group-hover:border-primary/50 group-hover:text-primary transition-all uppercase">
+                      {job.company.substring(0, 2)}
+                    </div>
+                    <div className="flex-1">
+                       <div className="flex flex-wrap items-center gap-2 mb-1">
+                          <h3 className="font-bold text-lg">{job.role}</h3>
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-slate-400">
+                            {job.type}
+                          </span>
+                       </div>
+                       <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500">
+                          <div className="flex items-center gap-1">
+                            <Building2 className="w-3 h-3" />
+                            {job.company}
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <MapPin className="w-3 h-3" />
+                            {job.location}
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <DollarSign className="w-3 h-3" />
+                            {job.salary}
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            {new Date(job.created).toLocaleDateString()}
+                          </div>
+                       </div>
+                    </div>
+                    <button className="btn-secondary py-2 px-6 text-sm font-semibold flex items-center gap-2 self-start sm:self-center">
+                      View Details <ArrowUpRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

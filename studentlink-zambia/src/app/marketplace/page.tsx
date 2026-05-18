@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Search,
   Plus,
@@ -16,43 +16,25 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { pb } from "@/lib/pocketbase";
+import { usePocketBaseList } from "@/hooks/usePocketBase";
+import { RecordModel } from "pocketbase";
 
-type Product = {
-  id: string;
+interface Product extends RecordModel {
   title: string;
   price: number;
   category: string;
   location: string;
   seller_name: string;
-};
+}
 
 export default function MarketplacePage() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: products, loading } = usePocketBaseList<Product>('marketplace');
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [paymentStep, setPaymentStep] = useState<"method" | "processing" | "success">("method");
   const [selectedMethod, setSelectedMethod] = useState("");
-
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  const fetchProducts = async () => {
-    try {
-      const records = await pb.collection('marketplace').getFullList<Product>({
-        sort: '-created',
-      });
-      setProducts(records);
-    } catch (err) {
-      console.error("Failed to fetch products:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const filteredProducts = products.filter(p => {
     const matchesCategory = selectedCategory === "All" || p.category === selectedCategory;
@@ -87,7 +69,6 @@ export default function MarketplacePage() {
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
-        {/* Filters */}
         <div className="lg:w-64 flex flex-col gap-6">
           <div className="glass-card p-5">
              <div className="relative mb-6">
@@ -128,7 +109,6 @@ export default function MarketplacePage() {
           </div>
         </div>
 
-        {/* Product Grid */}
         <div className="flex-1">
           {loading ? (
             <div className="flex items-center justify-center py-20">
@@ -188,7 +168,6 @@ export default function MarketplacePage() {
         </div>
       </div>
 
-      {/* Payment Modal */}
       <AnimatePresence>
         {showPaymentModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">

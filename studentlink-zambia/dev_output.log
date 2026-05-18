@@ -2,17 +2,19 @@
 > studentlink-zambia@0.1.0 dev
 > next dev --turbopack
 
+ ⚠ Port 3000 is in use, trying 3001 instead.
    ▲ Next.js 15.1.0 (Turbopack)
-   - Local:        http://localhost:3000
-   - Network:      http://192.168.0.2:3000
+   - Local:        http://localhost:3001
+   - Network:      http://192.168.0.2:3001
 
  ✓ Starting...
- ✓ Ready in 1332ms
+ ✓ Ready in 1496ms
  ○ Compiling / ...
- ✓ Compiled / in 7.7s
- GET / 200 in 8672ms
- ✓ Compiled /login in 401ms
- GET /login 200 in 467ms
- GET / 200 in 96ms
- GET /login 200 in 70ms
+ ✓ Compiled / in 11.8s
+ GET / 200 in 13299ms
+ ○ Compiling /login ...
+ ✓ Compiled /login in 765ms
+ GET /login 200 in 968ms
+ ✓ Compiled /signup in 438ms
+ GET /signup 200 in 520ms
 [?25h

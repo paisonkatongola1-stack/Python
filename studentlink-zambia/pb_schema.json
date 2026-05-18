@@ -1,0 +1,86 @@
+[
+  {
+    "name": "users",
+    "type": "auth",
+    "schema": [
+      {
+        "name": "name",
+        "type": "text",
+        "required": true
+      },
+      {
+        "name": "university",
+        "type": "text",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "scholarships",
+    "type": "base",
+    "schema": [
+      { "name": "title", "type": "text", "required": true },
+      { "name": "provider", "type": "text", "required": true },
+      { "name": "deadline", "type": "date", "required": true },
+      { "name": "value", "type": "text" },
+      { "name": "category", "type": "text" },
+      { "name": "location", "type": "text" },
+      { "name": "requirements", "type": "editor" }
+    ],
+    "listRule": "",
+    "viewRule": "",
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null
+  },
+  {
+    "name": "marketplace",
+    "type": "base",
+    "schema": [
+      { "name": "title", "type": "text", "required": true },
+      { "name": "price", "type": "number", "required": true },
+      { "name": "category", "type": "text" },
+      { "name": "location", "type": "text" },
+      { "name": "image", "type": "file", "options": { "maxSelect": 1, "maxSize": 5242880 } },
+      { "name": "seller", "type": "relation", "required": true, "options": { "collectionId": "_pb_users_auth_", "maxSelect": 1 } }
+    ],
+    "listRule": "",
+    "viewRule": "",
+    "createRule": "@request.auth.id != \"\"",
+    "updateRule": "@request.auth.id = seller",
+    "deleteRule": "@request.auth.id = seller"
+  },
+  {
+    "name": "jobs",
+    "type": "base",
+    "schema": [
+      { "name": "role", "type": "text", "required": true },
+      { "name": "company", "type": "text", "required": true },
+      { "name": "location", "type": "text" },
+      { "name": "type", "type": "text" },
+      { "name": "salary", "type": "text" },
+      { "name": "logo", "type": "text" }
+    ],
+    "listRule": "",
+    "viewRule": "",
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null
+  },
+  {
+    "name": "posts",
+    "type": "base",
+    "schema": [
+      { "name": "content", "type": "editor", "required": true },
+      { "name": "author", "type": "relation", "required": true, "options": { "collectionId": "_pb_users_auth_", "maxSelect": 1 } },
+      { "name": "university", "type": "text" },
+      { "name": "likes", "type": "number", "options": { "min": 0 } },
+      { "name": "tags", "type": "json" }
+    ],
+    "listRule": "",
+    "viewRule": "",
+    "createRule": "@request.auth.id != \"\"",
+    "updateRule": "@request.auth.id = author",
+    "deleteRule": "@request.auth.id = author"
+  }
+]

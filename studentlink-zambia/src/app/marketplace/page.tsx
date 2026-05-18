@@ -1,22 +1,22 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Search,
   Plus,
   MapPin,
   Tag,
-
   Book,
   Laptop,
   Home,
   Smartphone,
   CheckCircle2,
   X,
-
+  Loader2
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { pb } from "@/lib/pocketbase";
 
 type Product = {
   id: string;
@@ -24,26 +24,35 @@ type Product = {
   price: number;
   category: string;
   location: string;
-  image: string;
-  seller: string;
+  seller_name: string;
 };
 
-const products: Product[] = [
-  { id: "1", title: "Organic Chemistry 10th Ed", price: 350, category: "Books", location: "UNZA Main Campus", seller: "Mwaba K.", image: "https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&q=80&w=200&h=200" },
-  { id: "2", title: "MacBook Pro M1 2020", price: 12500, category: "Electronics", location: "CBU Riverside", seller: "John D.", image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=200&h=200" },
-  { id: "3", title: "Scientific Calculator", price: 150, category: "Electronics", location: "Mulungushi", seller: "Sarah M.", image: "https://images.unsplash.com/photo-1574607383476-f517f220d308?auto=format&fit=crop&q=80&w=200&h=200" },
-  { id: "4", title: "Room for Rent", price: 1200, category: "Housing", location: "Near UNZA", seller: "Grace T.", image: "https://images.unsplash.com/photo-1522770179533-24471fcdba45?auto=format&fit=crop&q=80&w=200&h=200" },
-  { id: "5", title: "iPhone 12 128GB", price: 7500, category: "Electronics", location: "Cavendish", seller: "Bwalya S.", image: "https://images.unsplash.com/photo-1611791484670-ce19b801d192?auto=format&fit=crop&q=80&w=200&h=200" },
-  { id: "6", title: "Lab Coat & Safety Goggles", price: 200, category: "Other", location: "UNZA Ridgeway", seller: "Peter Z.", image: "https://images.unsplash.com/photo-1581093583449-80dcaed79a32?auto=format&fit=crop&q=80&w=200&h=200" },
-];
-
 export default function MarketplacePage() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [paymentStep, setPaymentStep] = useState<"method" | "processing" | "success">("method");
   const [selectedMethod, setSelectedMethod] = useState("");
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      const records = await pb.collection('marketplace').getFullList<Product>({
+        sort: '-created',
+      });
+      setProducts(records);
+    } catch (err) {
+      console.error("Failed to fetch products:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filteredProducts = products.filter(p => {
     const matchesCategory = selectedCategory === "All" || p.category === selectedCategory;
@@ -117,69 +126,65 @@ export default function MarketplacePage() {
                 ))}
              </div>
           </div>
-
-          <div className="glass-card p-5">
-             <h3 className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4 px-2">Location</h3>
-             <div className="space-y-3">
-               {["UNZA", "Copperbelt University", "Mulungushi", "Cavendish"].map(loc => (
-                 <label key={loc} className="flex items-center gap-3 cursor-pointer group">
-                    <input type="checkbox" className="rounded border-white/10 bg-white/5 text-primary" />
-                    <span className="text-sm text-slate-400 group-hover:text-white">{loc}</span>
-                 </label>
-               ))}
-             </div>
-          </div>
         </div>
 
         {/* Product Grid */}
-        <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-          <AnimatePresence>
-            {filteredProducts.map((product) => (
-              <motion.div
-                key={product.id}
-                layout
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                className="glass-card overflow-hidden flex flex-col group"
-              >
-                <div className="relative aspect-square overflow-hidden bg-white/5">
-                   <img
-                    src={product.image}
-                    alt={product.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute top-3 left-3 bg-slate-900/80 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
-                    <span className="text-xs font-bold text-white">K{product.price}</span>
-                  </div>
-                </div>
-                <div className="p-5 flex-1 flex flex-col">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-[10px] uppercase font-bold text-primary tracking-wider px-2 py-0.5 bg-primary/10 rounded-md">
-                      {product.category}
-                    </span>
-                  </div>
-                  <h3 className="font-bold mb-1 group-hover:text-primary transition-colors">{product.title}</h3>
-                  <div className="flex items-center gap-1.5 text-slate-400 text-xs mb-4">
-                    <MapPin className="w-3 h-3" />
-                    {product.location}
-                  </div>
-                  <div className="mt-auto flex items-center justify-between">
-                     <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-white/10 border border-white/10" />
-                        <span className="text-xs text-slate-400">{product.seller}</span>
-                     </div>
-                     <button
-                      onClick={() => handleBuy(product)}
-                      className="btn-primary py-1.5 px-4 text-xs font-semibold"
-                    >
-                       Buy Now
-                     </button>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
+        <div className="flex-1">
+          {loading ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="w-10 h-10 animate-spin text-primary" />
+            </div>
+          ) : filteredProducts.length === 0 ? (
+            <div className="text-center py-20 glass-card">
+              <p className="text-slate-400">No products found. Be the first to list one!</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+              <AnimatePresence>
+                {filteredProducts.map((product) => (
+                  <motion.div
+                    key={product.id}
+                    layout
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    className="glass-card overflow-hidden flex flex-col group"
+                  >
+                    <div className="relative aspect-square overflow-hidden bg-white/5 flex items-center justify-center">
+                       <Tag className="w-12 h-12 text-slate-700" />
+                      <div className="absolute top-3 left-3 bg-slate-900/80 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
+                        <span className="text-xs font-bold text-white">K{product.price}</span>
+                      </div>
+                    </div>
+                    <div className="p-5 flex-1 flex flex-col">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-[10px] uppercase font-bold text-primary tracking-wider px-2 py-0.5 bg-primary/10 rounded-md">
+                          {product.category}
+                        </span>
+                      </div>
+                      <h3 className="font-bold mb-1 group-hover:text-primary transition-colors">{product.title}</h3>
+                      <div className="flex items-center gap-1.5 text-slate-400 text-xs mb-4">
+                        <MapPin className="w-3 h-3" />
+                        {product.location}
+                      </div>
+                      <div className="mt-auto flex items-center justify-between">
+                         <div className="flex items-center gap-2">
+                            <div className="w-6 h-6 rounded-full bg-white/10 border border-white/10" />
+                            <span className="text-xs text-slate-400">{product.seller_name}</span>
+                         </div>
+                         <button
+                          onClick={() => handleBuy(product)}
+                          className="btn-primary py-1.5 px-4 text-xs font-semibold"
+                        >
+                           Buy Now
+                         </button>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+          )}
         </div>
       </div>
 
